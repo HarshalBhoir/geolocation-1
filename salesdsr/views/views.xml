@@ -1,0 +1,167 @@
+<odoo>
+    <data>
+
+        <record id="salesdsr_tree_view" model="ir.ui.view">
+            <field name="name">All DSR</field>
+            <field name="model">crm.lead</field>
+            <field name="arch" type="xml">
+                <tree string="DSR" >
+                    <field name="type" invisible="1"/>
+                    <field name="date" required="1" />
+                    <field name="agency" required="1" />
+                    <field name="partner_id" />
+                    <field name="product" />
+                    <field name="task" />
+                    <field name="description" />
+                    <field name="team_id" />
+                    <field name="user_id" />
+                    <field name="unit_time" string="Time (Hours)" sum="Total time" widget="float_time" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="salesdsr_tree_view_inherit" model="ir.ui.view">
+            <field name="name">My DSR</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="salesdsr_tree_view" />
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <field name="user_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+            </field>
+        </record>
+
+        <!-- form view -->
+        <record id="salesdsr_line_form" model="ir.ui.view">
+            <field name="name">All DSR</field>
+            <field name="model">crm.lead</field>
+            <field name="arch" type="xml">
+                <form string="DSR">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" string="Name" />
+                                <field name="user_id" />
+                                <field name="date" />
+                                <field name="unit_time" string="Time (Hour)" widget="float_time"/>
+                            </group>
+                            <group>
+                                <field name="agency" />
+                                <field name="partner_id" />
+                                <field name="product" />
+                            </group>
+                            <group>
+                                <field name="task" />
+                                <field name="description" widget="html"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="location" widget="one2many">
+                                <tree editable="top">
+                                    <field name="name" />
+                                    <field name="counter" invisible="1" />
+                                    <field name="latitude" readonly="1" />
+                                    <field name="longitude" readonly="1" />
+                                    <button string="Get Geolocation" custom="click" icon="fa fa-map-marker" class="oe_read_only"/>
+                                </tree>
+                            </field>
+                            <field name="kms" />
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread" options="{'post_refresh': 'recipients'}"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="salesdsr_line_form_inherit" model="ir.ui.view">
+            <field name="name">My DSR</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="salesdsr_line_form" />
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <field name="user_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+            </field>
+        </record>
+
+        <!-- search filter -->
+        <record id="salesdsr_search_view" model="ir.ui.view">
+            <field name="name">DSR</field>
+            <field name="model">crm.lead</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="user_id" />
+                    <field name="product" />
+                    <field name="partner_id" />
+                    <field name="agency" />
+                    <field name="team_id" />
+                    <filter name="dsr_today" string="Today's DSR" domain="[('date','=',context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter name="dsr_week" string="Last 7 days's" domain="['&amp;', ('date', '&lt;=', context_today().strftime('%Y-%m-%d')), ('date', '&gt;=', (context_today()-datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                    <filter name="last_month" string="Last Month" domain="[('date', '&gt;=', (context_today()-datetime.timedelta(days=30)).strftime('%Y-%m-%d'))]" />
+                    <group expand="0" string="Group By">
+                        <filter string="Salesperson" name="group_salesperson" domain="[]" context="{'group_by':'user_id'}"/>
+                        <filter string="Product" name="group_product" domain="[]" context="{'group_by':'product'}"/>
+                        <filter string="Customer" name="group_customer" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Partner" name="group_partner" domain="[]" context="{'group_by':'agency'}"/>
+                        <filter string="Team" name="group_team" domain="[]" context="{'group_by': 'team_id'}" />
+                    </group>
+                </search>
+            </field>
+        </record>        
+
+        <record id="action_my_dsr" model="ir.actions.act_window">
+            <field name="name">My DSR</field>
+            <field name="res_model">crm.lead</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_dsr_today': 1, 'default_type': 'dsr', 'default_user_id': uid}</field>
+            <field name="domain">[('user_id', '=', uid), ('type', '=', 'dsr')]</field>
+            <field name="search_view_id" ref="salesdsr_search_view" />
+            <field name="view_ids" eval="[(5,0,0), 
+                                          (0, 0, {'view_mode': 'tree', 'view_id':ref('salesdsr_tree_view_inherit')}),
+                                          (0, 0, {'view_mode': 'form', 'view_id': ref('salesdsr_line_form_inherit')})]" />
+        </record>
+
+        <record id="action_all_dsr" model="ir.actions.act_window">
+            <field name="name">All DSR</field>
+            <field name="res_model">crm.lead</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_dsr_today': 1, 'default_type': 'dsr', 'default_user_id': uid}</field>
+            <field name="domain">[('type', '=', 'dsr')]</field>
+            <field name="search_view_id" ref="salesdsr_search_view" />
+            <field name="view_ids" eval="[(5,0,0), 
+                                          (0, 0, {'view_mode': 'tree', 'view_id':ref('salesdsr_tree_view')}),
+                                          (0, 0, {'view_mode': 'form', 'view_id': ref('salesdsr_line_form')})]" />
+        </record>
+
+        <menuitem id="menu_salesdsr_root"
+                  name="DSR"
+                  sequence="5"
+                  web_icon="salesdsr,static/description/icon_salesdsr.png" />
+
+        <menuitem id="menu_salesdsr"
+                  name="DSR"
+                  sequence="1"
+                  parent="menu_salesdsr_root" />
+
+        <menuitem id="salesdsr_my_visit"
+                  name="My DSR"
+                  sequence="1"
+                  parent="menu_salesdsr"
+                  action="action_my_dsr"/>
+
+        <menuitem id="salesdsr_visit_approval"
+                  name="All DSR"
+                  sequence="10"
+                  parent="menu_salesdsr"
+                  action="action_all_dsr"/>
+
+    </data>
+</odoo>

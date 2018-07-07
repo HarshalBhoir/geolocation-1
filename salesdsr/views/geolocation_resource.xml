@@ -1,0 +1,11 @@
+<odoo>
+    <data>
+
+        <template id="assets_backend" name="get_geolocation" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/salesdsr/static/src/js/get_geolocation.js" />
+            </xpath>
+        </template>
+        
+    </data>
+</odoo>

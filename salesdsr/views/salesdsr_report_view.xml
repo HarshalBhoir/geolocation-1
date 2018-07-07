@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_salesdsr_line_pivot" model="ir.ui.view">
+            <field name="name">crm.lead pivot</field>
+            <field name="model">crm.lead</field>
+            <field name="arch" type="xml">
+                <pivot string="DSR">
+                    <field name="user_id" type="row"/>
+                    <field name="date" interval="month" type="col"/>
+                    <field name="unit_time" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="act_salesdsr_report" model="ir.actions.act_window">
+            <field name="name">By SalesPerson</field>
+            <field name="res_model">crm.lead</field>
+            <field name="domain">[('type', '=', 'dsr')]</field>
+            <field name="context">{'search_default_groupby_user_id':1,}</field>
+            <field name="search_view_id" ref="crm.view_crm_case_leads_filter"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to record DSR.
+                </p>
+                <p>
+                    You can register and track your workings hours by product every
+                    day. Every time spent on a Visit will become a cost and can be re-invoiced to
+                    customers if required.
+                </p>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="act_salesdsr_report_pivot">
+            <field name="sequence" eval="5"/>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="salesdsr.view_salesdsr_line_pivot"/>
+            <field name="act_window_id" ref="act_salesdsr_report"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="act_salesdsr_report_tree">
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="salesdsr_tree_view"/>
+            <field name="act_window_id" ref="act_salesdsr_report"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="act_salesdsr_report_form">
+            <field name="sequence" eval="15"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="salesdsr_line_form"/>
+            <field name="act_window_id" ref="act_salesdsr_report"/>
+        </record>
+
+        <record id="salesdsr_action_report_by_product" model="ir.actions.act_window">
+            <field name="name">By Product</field>
+            <field name="res_model">crm.lead</field>
+            <field name="domain">[('product', '!=', False), ('type', '=', 'dsr')]</field>
+            <field name="context">{'search_default_groupby_product':1,}</field>
+            <field name="search_view_id" ref="crm.view_crm_case_leads_filter"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to record DSR.
+                </p>
+                <p>
+                    You can register and track your workings hours by Visit every
+                    day. Every time spent on a Visit will become a cost and can be re-invoiced to
+                    customers if required.
+                </p>
+            </field>
+        </record>
+
+        <record id="salesdsr_action_view_report_by_product_pivot" model="ir.actions.act_window.view">
+            <field name="sequence" eval="5"/>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="salesdsr.view_salesdsr_line_pivot"/>
+            <field name="act_window_id" ref="salesdsr_action_report_by_product"/>
+        </record>
+
+        <record id="salesdsr_action_view_report_by_product_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="salesdsr_tree_view"/>
+            <field name="act_window_id" ref="salesdsr_action_report_by_product"/>
+        </record>
+
+        <record id="salesdsr_action_view_report_by_product_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="15"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="salesdsr.salesdsr_line_form"/>
+            <field name="act_window_id" ref="salesdsr_action_report_by_product"/>
+        </record>
+
+        <record id="salesdsr_action_report_by_partner" model="ir.actions.act_window">
+            <field name="name">By Partner</field>
+            <field name="res_model">crm.lead</field>
+            <field name="domain">[('agency', '!=', False), ('type', '=', 'dsr')]</field>
+            <field name="context">{'search_default_groupby_agency':1,}</field>
+            <field name="search_view_id" ref="crm.view_crm_case_leads_filter"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to record activities.
+                </p>
+                <p>
+                    You can register and track your workings hours by project every
+                    day. Every time spent on a project will become a cost and can be re-invoiced to
+                    customers if required.
+                </p>
+            </field>
+        </record>
+
+        <record id="salesdsr_action_view_report_by_partner_pivot" model="ir.actions.act_window.view">
+            <field name="sequence" eval="5"/>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="view_salesdsr_line_pivot"/>
+            <field name="act_window_id" ref="salesdsr_action_report_by_partner"/>
+        </record>
+
+        <record id="salesdsr_action_view_report_by_partner_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="salesdsr_tree_view"/>
+            <field name="act_window_id" ref="salesdsr_action_report_by_partner"/>
+        </record>
+
+        <record id="salesdsr_action_view_report_by_partner_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="15"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="salesdsr.salesdsr_line_form"/>
+            <field name="act_window_id" ref="salesdsr_action_report_by_partner"/>
+        </record>
+
+        <record id="salesdsr_action_report_by_customer" model="ir.actions.act_window">
+            <field name="name">By Customer</field>
+            <field name="res_model">crm.lead</field>
+            <field name="domain">[('partner_id', '!=', False), ('type', '=', 'dsr')]</field>
+            <field name="context">{'search_default_groupby_partner_id':1,}</field>
+            <field name="search_view_id" ref="crm.view_crm_case_leads_filter"/>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to record Visit.
+                </p>
+                <p>
+                    You can register and track your workings hours by project every
+                    day. Every time spent on a project will become a cost and can be re-invoiced to
+                    customers if required.
+                </p>
+            </field>
+        </record>
+
+        <record id="salesdsr_action_view_report_by_customer_pivot" model="ir.actions.act_window.view">
+            <field name="sequence" eval="5"/>
+            <field name="view_mode">pivot</field>
+            <field name="view_id" ref="view_salesdsr_line_pivot"/>
+            <field name="act_window_id" ref="salesdsr_action_report_by_customer"/>
+        </record>
+
+        <record id="salesdsr_action_view_report_by_customer_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="salesdsr_tree_view"/>
+            <field name="act_window_id" ref="salesdsr_action_report_by_customer"/>
+        </record>
+
+        <record id="salesdsr_action_view_report_by_customer_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="15"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="salesdsr.salesdsr_line_form"/>
+            <field name="act_window_id" ref="salesdsr_action_report_by_customer"/>
+        </record>
+
+
+        <menuitem id="menu_salesdsr_reports"
+                  name="Reporting"
+                  parent="menu_salesdsr_root"
+                  sequence="99"/>
+
+        <menuitem id="menu_salesdsr_reports_salesdsr"
+                  name="DSR"
+                  parent="menu_salesdsr_reports"
+                  sequence="10"/>
+
+        <menuitem id="menu_salesdsr_user_analysis"
+                  parent="menu_salesdsr_reports_salesdsr"
+                  action="act_salesdsr_report"
+                  name="By SalesPerson"
+                  sequence="10"/>
+
+        <menuitem id="salesdsr_menu_report_salesdsr_by_product"
+                  parent="menu_salesdsr_reports_salesdsr"
+                  action="salesdsr_action_report_by_product"
+                  name="By Product"
+                  sequence="15"/>
+
+        <menuitem id="salesdsr_menu_report_salesdsr_by_partner"
+                  parent="menu_salesdsr_reports_salesdsr"
+                  action="salesdsr_action_report_by_partner"
+                  name="By Partner"
+                  sequence="20"/>
+
+        <menuitem id="salesdsr_menu_report_salesdsr_by_customer"
+                  parent="menu_salesdsr_reports_salesdsr"
+                  action="salesdsr_action_report_by_customer"
+                  name="By Customer"
+                  sequence="25"/>
+
+    </data>
+</odoo>
