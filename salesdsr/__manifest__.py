@@ -26,7 +26,7 @@
         'views/views.xml',
         'views/salesdsr_report_view.xml',
         'views/geolocation_resource.xml',
-        'views/res_company.xml',
+        'views/res_config_settings.xml',
     ],
 
     'installable': True,

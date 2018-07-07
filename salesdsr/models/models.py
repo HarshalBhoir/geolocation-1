@@ -5,12 +5,6 @@ from datetime import datetime, timedelta
 import googlemaps
 from datetime import datetime
 
-#todo : class to add option API Key
-class ResCompany(models.TransientModel):
-    _inherit = 'res.config.settings'
-
-    geolocation_api = fields.Char("Geolocation Key", help="Google API Key to use in Geolocation")
-
 
 class CRMSalesPersonGeolocation(models.Model):
     _name = 'crm.salesperson.geolocation'
