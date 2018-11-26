@@ -38,7 +38,7 @@ class salesdsr(models.Model):
     @api.one
     @api.onchange('location')
     def _compute_kms(self):
-        api_key = self.env['res.config.settings'].geolocation_api  # recheck configure it
+        api_key = self.env['ir.config_parameter'].sudo().search([('key', '=', 'geolocation_api')]).value
         gmaps = googlemaps.Client(key=api_key)
         now = datetime.now()
         distance = 0.0
@@ -59,6 +59,7 @@ class salesdsr(models.Model):
         self.kms = distance / 1000.0
 
     @api.one
+    @api.model
     def update_location(self, latitude=0.0, longitude=0.0, record=None):
         if record:
             rec = self.location.browse(record)
