@@ -32,17 +32,19 @@ class salesdsr(models.Model):
     unit_time = fields.Float('Hours', help="Total Time Consume in current Activity")
 
     # for kms
-    kms = fields.Integer('KMS', compute='_compute_kms', help='Total Distance Covered')
+    kms = fields.Integer('KMS', compute='_compute_kms', help='Total Distance Covered (in KMS)')
     location = fields.Many2many('crm.salesperson.geolocation', string='Location', help='Location of SalesPerson at specified time')
 
-    @api.one
+    @api.model
     @api.onchange('location')
     def _compute_kms(self):
-        api_key = self.env['res.config.settings'].geolocation_api  # recheck configure it
+        api_key = self.env['ir.config_parameter'].sudo().search([('key', '=', 'geolocation_api')]).value
         gmaps = googlemaps.Client(key=api_key)
         now = datetime.now()
         distance = 0.0
         records = self.location
+        if not records:
+            return
         if len(records) < 2 or records[1].longitude == 0:
             return
         orig_coord = str(records[0].latitude) + ',' + str(records[0].longitude)
@@ -59,6 +61,7 @@ class salesdsr(models.Model):
         self.kms = distance / 1000.0
 
     @api.one
+    @api.model
     def update_location(self, latitude=0.0, longitude=0.0, record=None):
         if record:
             rec = self.location.browse(record)
